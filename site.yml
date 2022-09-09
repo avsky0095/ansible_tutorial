@@ -13,7 +13,7 @@
 
 - hosts: web_servers
   become: true
-  gather_facts: no #default yes
+  gather_facts: false #default yes
   tasks:
     - name: install apache php for ubuntu
       tags: apache,apache2,ubuntu
@@ -24,10 +24,18 @@
         state: latest
       when: ansible_distribution == "Ubuntu"
 
+    - name: copy default html file for site
+      tags: apache,apache2,ubuntu
+      copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
 
 - hosts: db_servers
   become: true
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: install mariadb package
       tags: db,mariadb,ubuntu
@@ -40,7 +48,7 @@
 
 - hosts: file_servers
   become: true
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: install samba package
       tags: samba
