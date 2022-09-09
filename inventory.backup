@@ -1,0 +1,6 @@
+192.168.56.111 apache_package=apache2 php_package=libapache2-mod-php
+
+192.168.56.211 apache_package=apache2 php_package=libapache2-mod-php
+192.168.56.212 apache_package=apache2 php_package=libapache2-mod-php
+192.168.56.213 apache_package=apache2 php_package=libapache2-mod-php
+192.168.56.214 apache_package=apache2 php_package=libapache2-mod-php
