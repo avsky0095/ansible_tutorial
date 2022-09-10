@@ -1,0 +1,42 @@
+
+- name: install apache-php for ubuntu
+  tags: apache,apache2,ubuntu,webserver
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+    state: latest
+  when: ansible_distribution in [ "Debian", "Ubuntu" ]
+
+- name: start apache2
+  tags: apache,apache2,ubuntu
+  service:
+    name: apache2
+    state: started
+    enabled: false
+  when: ansible_distribution in [ "Debian", "Ubuntu" ]
+
+- name: change email address for admin
+  tags: apache,apache2,ubuntu
+  lineinfile:
+    path: /etc/apache2/sites-available/000-default.conf
+    regexp: '^\sServerAdmin'
+    line: ServerAdmin somebody@somewhere.net
+  when: ansible_distribution in [ "Debian", "Ubuntu" ]
+  register: apachewebserver
+
+- name: restart apache
+  tags: apache,apache2,ubuntu
+  service:
+    name: apache2
+    state: restarted
+  when: apachewebserver.changed
+
+- name: copy default html file for site
+  tags: apache,apache2,ubuntu
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644

@@ -1,0 +1,6 @@
+
+ - name: add ssh key for simone
+   tags: always
+   ansible.posix.authorized_key:   # ansible-galaxy, module "ansible_posix"
+     user: simone
+     key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/vagrantkey.pub') }}"
