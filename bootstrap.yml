@@ -1,0 +1,134 @@
+---
+
+# boostrap scipt for initial installation in FRESH NEW server
+
+- hosts : all
+  become: true
+  gather_facts: true                                           # default: true | berfungsi sebagai mencari fakta di remote server/seperti ping
+  pre_tasks:
+  - name: install updates
+    tags: always
+    apt:
+      # upgrade: dist
+      update_cache: yes
+    when: ansible_distribution in [ "Debian", "Ubuntu" ]
+
+
+- hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+  - name: create simone user
+    tags: always
+    user:
+      name: simone
+      groups: root
+
+  - name: add ssh key for simone
+    tags: always
+    ansible.posix.authorized_key:   # ansible-galaxy, module "ansible_posix"
+      user: simone
+      state: present
+      key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/vagrantkey.pub') }}"
+      
+  - name: add sudoers file for simone
+    tags: always
+    copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+      mode: 0440
+  
+# 
+# - hosts: workstations
+  # become: true
+  # gather_facts: false
+  # # tasks:
+    # # - name: install unzip
+      # # package:
+        # # name: unzip
+# #
+    # # - name: install terraform
+      # # unarchive:
+        # # src: https://releases.hashicorp.com/terraform/1.2.9/terraform_1.2.9_linux_amd64.zip
+        # # dest: /usr/local/bin/
+        # # remote_src: yes
+        # # owner: root
+        # # group: root
+        # # mode: 0755
+# 
+        # 
+# - hosts: web_servers
+  # become: true
+  # gather_facts: true
+  # tasks:
+    # - name: install apache-php for ubuntu
+      # tags: apache,apache2,ubuntu,webserver
+      # apt:
+        # name:
+          # - apache2
+          # - libapache2-mod-php
+        # state: latest
+      # when: ansible_distribution in [ "Debian", "Ubuntu" ]
+# 
+    # - name: start apache2
+      # tags: apache,apache2,ubuntu
+      # service:
+        # name: apache2
+        # state: started
+        # enabled: false
+      # when: ansible_distribution in [ "Debian", "Ubuntu" ]
+# 
+    # - name: change email address for admin
+      # tags: apache,apache2,ubuntu
+      # lineinfile:
+        # path: /etc/apache2/sites-available/000-default.conf
+        # regexp: '^\sServerAdmin'
+        # line: ServerAdmin somebody@somewhere.net
+      # when: ansible_distribution in [ "Debian", "Ubuntu" ]
+      # register: apachewebserver
+# 
+    # - name: restart apache
+      # tags: apache,apache2,ubuntu
+      # service:
+        # name: apache2
+        # state: restarted
+      # when: apachewebserver.changed
+# 
+    # - name: copy default html file for site
+      # tags: apache,apache2,ubuntu
+      # copy:
+        # src: default_site.html
+        # dest: /var/www/html/index.html
+        # owner: root
+        # group: root
+        # mode: 0644
+# 
+# 
+# - hosts: db_servers
+  # become: true
+  # gather_facts: true
+  # tasks:
+    # - name: install mariadb package
+      # tags: db,mariadb,ubuntu
+      # apt:
+        # name:
+          # - mariadb-server
+        # state: latest
+      # when: ansible_distribution == "ubuntu"
+# 
+# 
+# - hosts: file_servers
+  # become: true
+  # gather_facts: true
+  # tasks:
+    # - name: install samba package
+      # tags: samba
+      # apt:
+        # name:
+          # - samba
+        # state: latest
+      # when: ansible_distribution == "ubuntu"
+# 
+# 

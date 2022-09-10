@@ -2,12 +2,37 @@
 
 - hosts : all
   become: true
+  gather_facts: true #default true
+  # pre_tasks:
+  # - name: install updates
+    # tags: always
+    # apt:
+      # # upgrade: dist
+      # update_cache: yes
+    # when: ansible_distribution in [ "Debian", "Ubuntu" ]
+    
 
+- hosts: workstations
+  become: true
+  gather_facts: false 
+  tasks:
+    - name: remove unzip
+      package:
+        name: unzip
+        state: absent
+
+    - name: remove file terraform
+      ansible.builtin.file:
+        path: /usr/local/bin/terraform
+        state: absent
+
+      
 - hosts: web_servers
   become: true
+  gather_facts: false 
   tasks:
-    - name: install apache php for ubuntu
-      tags: apache,apache2,ubuntu
+    - name: remove apache php for ubuntu
+      tags: apache,apache2,ubuntu,webserver
       apt:
         name: 
           - apache2
@@ -15,11 +40,17 @@
         state: absent
       when: ansible_distribution == "Ubuntu"
 
+    - name: remove file default_site html file
+      ansible.builtin.file:
+        path: /var/www/html/index.html
+        state: absent
+
 
 - hosts: db_servers
   become: true
+  gather_facts: false
   tasks:
-    - name: install mariadb package
+    - name: remove mariadb package
       tags: db,mariadb,ubuntu
       apt:
         name: 
@@ -30,8 +61,9 @@
 
 - hosts: file_servers
   become: true
+  gather_facts: false
   tasks:
-    - name: install samba package
+    - name: remove samba package
       tags: samba
       apt:
         name: 
