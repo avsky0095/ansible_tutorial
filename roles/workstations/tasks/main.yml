@@ -3,6 +3,11 @@
   package:
     name: unzip
 
+- name: check if terraform file exists
+  stat:
+    path: /usr/local/bin/terraform
+  register: stat_tf_result
+
 - name: install terraform
   unarchive:
     src: https://releases.hashicorp.com/terraform/1.2.9/terraform_1.2.9_linux_amd64.zip
@@ -11,3 +16,4 @@
     owner: root
     group: root
     mode: 0755
+  when: stat_tf_result.stat.exists == false

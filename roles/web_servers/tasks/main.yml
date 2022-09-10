@@ -1,36 +1,29 @@
 
 - name: install apache-php for ubuntu
-  tags: apache,apache2,ubuntu,webserver
+  tags: apache,httpd,php
   apt:
     name:
-      - apache2
-      - libapache2-mod-php
+      - "{{ apache_package_name }}"                          # variable didefinisikan di folder host_vars
+      - "{{ php_package_name }}"
     state: latest
-  when: ansible_distribution in [ "Debian", "Ubuntu" ]
+  # when: ansible_distribution in [ "Debian", "Ubuntu" ]
 
 - name: start apache2
   tags: apache,apache2,ubuntu
   service:
-    name: apache2
+    name: "{{ apache_service }}"
     state: started
-    enabled: false
-  when: ansible_distribution in [ "Debian", "Ubuntu" ]
+    enabled: true
+  # when: ansible_distribution in [ "Debian", "Ubuntu" ]
 
 - name: change email address for admin
-  tags: apache,apache2,ubuntu
+  tags: apache,httpd
   lineinfile:
     path: /etc/apache2/sites-available/000-default.conf
     regexp: '^\sServerAdmin'
-    line: ServerAdmin somebody@somewhere.net
+    line: ServerAdmin webserver212@somewhere.net
   when: ansible_distribution in [ "Debian", "Ubuntu" ]
-  register: apachewebserver
-
-- name: restart apache
-  tags: apache,apache2,ubuntu
-  service:
-    name: apache2
-    state: restarted
-  when: apachewebserver.changed
+  notify: restart_apache
 
 - name: copy default html file for site
   tags: apache,apache2,ubuntu
