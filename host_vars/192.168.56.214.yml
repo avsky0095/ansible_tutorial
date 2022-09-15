@@ -1,0 +1,3 @@
+
+ssh_users: "vagrant simone andrianovsky"
+ssh_template_file: ssh_config_ubuntu.j2

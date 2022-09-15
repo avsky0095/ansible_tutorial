@@ -1,6 +1,16 @@
 
- - name: add ssh key for simone
-   tags: always
-   ansible.posix.authorized_key:   # ansible-galaxy, module "ansible_posix"
-     user: simone
-     key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/vagrantkey.pub') }}"
+- name: add ssh key for simone
+  tags: always
+  ansible.posix.authorized_key:   # ansible-galaxy, module "ansible_posix"
+    user: simone
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/vagrantkey.pub') }}"
+
+- name: generate sshd_config file from template
+  tags: ssh
+  template:
+    src: "{{ ssh_template_file }}"
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_sshd              # notify to handlers (file in the folder)

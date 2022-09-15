@@ -11,8 +11,11 @@ main files:
 - site.yml		 main ansible playbook tasks
 
 folders:
-- roles			 contains separated playbooks from site.yml 
-				 in order to more clean code
+- roles			 contains separated playbooks from site.yml in order to more clean code
+  > tasks		 main script of tasks	 				 
+  > handlers	 separate task in more specific ways
+  > files		 additional files for tasks
+- host_vars		 additional variable for server for specific tasks
 
 etc:
 - bootstrap.yml	 initial configuration for fresh new server
